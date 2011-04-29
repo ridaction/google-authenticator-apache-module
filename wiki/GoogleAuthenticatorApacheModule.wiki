@@ -1,0 +1,60 @@
+#summary Google Authenticator Apache Module
+
+= Introduction =
+
+Module to use Google Authenticator's Two-Factor Authentication in the Apache HTTP Server.
+
+= Building =
+
+You have to have the Apache development environment on your system. This uses the "apxs" script, which should be built and installed as a part of the Apache development environment.
+
+= Limitations =
+
+ * Does not use scratch codes
+
+ * Does not invalidate codes after use.
+
+
+= Discussion =
+
+Code reuse is tricky. Because HTTP requests, unlike interactive SSH sessions, are very short lived. It is therefore very likely that a code would need to be re-used immediately to request another page.
+
+Also, the way HTTP works, is that once validated, the browser keeps sending the same credentials over and over. As our codes expire outside of a 60 second window - that means after 60 seconds of interacting with a web server, you will be asked to supply a new key. There are two possible fixes for this: 
+
+1. Make the keys valid for much longer periods of time 
+
+2. Write an authentication cookie to the user's browser, and work with that after the first request.
+
+Due to the way Apache handles Digest authentication, there is no leeway in time allowed. With Basic authentication, the module can try times around the current time for a valid key, but only one attempt is made in Digest mode. Thus, this requires a high level of clock synchronization between clients and servers.
+
+
+= Recommendations ==
+Someone can always sniff the wire and steal your cookies to hijack your session. This cannot be done if you are using SSL, which is highly recommended - and imperative for any "real" security.
+
+= Configuration =
+
+GoogleAuthPath is the root directory to hold user authentication files in. This can be specified as either a path relative to Apache's root, or an absolute path. For example, if I specified "ga_auth" (as below) and I logged in with the username "user" - the module would look for a file called: `/usr/local/apache2/ga_auth/user`  (under my setup) for the user's login credentials. This file must be generated from the "google_authenticator" program, consisting of the secret key, scratch codes, etc.
+
+GoogleAuthCookieLife specifies how long (in seconds) authentication cookies are to last. Not specifying this disables authentication cookies, meaning "sessions" will only last about a minute before needed re-authentication.
+
+EntryWindow specifies the "leeway" in how exact the time has to be for a proper authentication to occur. "0" would mean it must be exact. "1" would mean it will except one entry newer or older. (About +/- 30 seconds) "2" would accept entries +/- 60 seconds. The default value is "1". Higher numbers can be used to account for clocks not being entirely accurate, but are not as secure. This is only used for Basic authentication, as Digest authentication will only work with the extact code required at the exact present time.
+
+== Example Configuration ==
+
+<code>
+Loadmodule authn_google_module modules/mod_authn_google.so
+<Directory /MyPath>
+  Options FollowSymLinks Indexes ExecCGI
+  AllowOverride All
+  Order deny,allow
+  Allow from all
+
+  AuthType Basic
+  AuthName "My Test"
+  AuthBasicProvider "google_authenticator"
+  Require valid-user
+  GoogleAuthUserPath ga_auth
+  GoogleAuthCookieLife 3600
+  GoogleAuthEntryWindow 2
+</Directory>
+</code>
