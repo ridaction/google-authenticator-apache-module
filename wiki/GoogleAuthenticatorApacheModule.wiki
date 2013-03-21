@@ -8,6 +8,8 @@ Module to use Google Authenticator's Two-Factor Authentication in the Apache HTT
 
 You have to have the Apache development environment on your system. This uses the "apxs" script, which should be built and installed as a part of the Apache development environment.
 
+The easiest way to generally do this is to make sure you have the "httpd-devel" package(s) installed (depending on your distribution - in REHL/CentOS this is done with "yum install httpd-devel"). Once installed, a simple "make" in the project directory should do the trick.
+
 = Limitations =
 
  * Does not use scratch codes
@@ -17,7 +19,7 @@ You have to have the Apache development environment on your system. This uses th
 
 = Discussion =
 
-Code reuse is tricky. Because HTTP requests, unlike interactive SSH sessions, are very short lived. It is therefore very likely that a code would need to be re-used immediately to request another page.
+Code reuse (as in _security_ code) is tricky. Because HTTP requests, unlike interactive SSH sessions, are very short lived. It is therefore very likely that a code would need to be re-used immediately to request another page.
 
 Also, the way HTTP works, is that once validated, the browser keeps sending the same credentials over and over. As our codes expire outside of a 60 second window - that means after 60 seconds of interacting with a web server, you will be asked to supply a new key. There are two possible fixes for this: 
 
@@ -30,6 +32,8 @@ Due to the way Apache handles Digest authentication, there is no leeway in time 
 
 = Recommendations ==
 Someone can always sniff the wire and steal your cookies to hijack your session. This cannot be done if you are using SSL, which is highly recommended - and imperative for any "real" security.
+
+If you are worried about someone (insecure HTTP session, or even  a trojan running on your web client) stealing your cookie info, make sure you have a small "GoogleAuthCookieLife" (see below). A smaller value will invalidate the cookie quicker, but will require a user to re-login once it expires.
 
 = Configuration =
 
