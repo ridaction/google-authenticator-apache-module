@@ -35,21 +35,24 @@ When this authentication is used, the {{{ga_check_password}}} function is given 
 
 The {{{ga_get_realm_hash}}} function is used when a client has used [http://en.wikipedia.org/wiki/Digest_access_authentication Digest Access Authentication]. 
 
-With this method, the HTTP client generates a hash consisting of:
+With this method, the HTTP client generates a hash ("HA1") consisting of:
  * The server-provided "realm" (Apache-configured cleartext string) 
  * Username
  * Password
 
-The client then sends the username and the *hash* to the server. 
+The service sends a one-time value ("nonce") to the client. The client hashes this value with the previous hash, generating a second hash ("HA2") sending it to the server.
 
 The {{{ga_realm_hash}}} function is passed the username and realm. After running our 2-Factor authorization algorithm, it determines what the password _should be_, then runs the same hash algorithm of it, along with the specified username and realm.
 
-It them returns the _hash result_ back to Apache, which decides if it matches that which the user had specified.
+It them returns the (HA1)_hash result_ back to Apache, which hashes it with the previously generated nonce value, and decides if it matches that (HA2) which the user had specified.
 
 This is much more secure because:
 
  * The password is never transmitted over the wire, in cleartext or otherwise.
- * Even if an unencrypted connection is used, the password cannot be snooped.
+ * The transmitted hash is only "good" for a given request. Any subsequent request would have been hashed against a different nonce, and thus not work.
+ * Even if an unencrypted connection is used, the password or hash cannot be snooped.
+ * Even if a client were to cache the HA1 hash, it does not contain the cleartext password.
+ 
 
 === "Third Level" Code ===
 
