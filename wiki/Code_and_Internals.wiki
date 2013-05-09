@@ -63,6 +63,7 @@ The "Third level" code are the common functions that the two provider functions 
  * {{{getSharedKey}}}
  * {{{hash_cookie}}}
 
-== Other References ==
+== Other References and Acknowledgements ==
 
-* [http://ci.apache.org/projects/httpd/trunk/doxygen/ Apache HTTP server and Portable Runtime API Docs]
+ * [http://ci.apache.org/projects/httpd/trunk/doxygen/ Apache HTTP server and Portable Runtime API Docs]
+ * [http://www.apachetutor.org/ Nick Kew's] incredible [http://www.amazon.com/Apache-Modules-Book-Application-Development/dp/0132409674 Apache Modules Book]
