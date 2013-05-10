@@ -37,7 +37,7 @@ If you are worried about someone (insecure HTTP session, or even  a trojan runni
 
 = Configuration =
 
-GoogleAuthPath is the root directory to hold user authentication files in. This can be specified as either a path relative to Apache's root, or an absolute path. For example, if I specified "ga_auth" (as below) and I logged in with the username "user" - the module would look for a file called: `/usr/local/apache2/ga_auth/user`  (under my setup) for the user's login credentials. This file must be generated from the "google_authenticator" program, consisting of the secret key, scratch codes, etc.
+{{{GoogleAuthPath}}} is the root directory to hold user authentication, or secret key files in. This can be specified as either a path relative to Apache's root, or an absolute path. For example, if I specified "ga_auth" (as below) and I logged in with the username "user" - the module would look for a file called: `/usr/local/apache2/ga_auth/user`  (under my setup) for the user's login credentials. See "Secret Key Files" below for more info. 
 
 {{{GoogleAuthCookieLife}}} specifies how long (in seconds) authentication cookies are to last. Not specifying this disables authentication cookies, meaning "sessions" will only last about a minute before needed re-authentication.
 
@@ -62,6 +62,29 @@ Loadmodule authn_google_module modules/mod_authn_google.so
   GoogleAuthEntryWindow 2
 </Directory>
 </code>
+
+== Secret Key File ==
+This file may be generated from the "google_authenticator" program, consisting of the secret key, scratch codes, etc. 
+
+You can alternativley create your own. It shall consist of a single line containing the users' 16-digit Base32-encoded key (which would be also entered into the Google Authentication application on the users' device).
+
+To add a second factor to the authentication (i.e. a password), add a line in the user's authentication password such as:
+
+{{{
+"PASSWORD=mySecret
+}}}
+
+Note that this line starts with a double-quote, which is the convention to make it look like a comment in a standard Google Authenticator file.
+
+So a complete file, including a password may look like this:
+
+{{{
+abcdefabcdef2345
+"PASSWORD=mySecret
+}}}
+
+
+*NOTE: The static password option is only present in release "r11" and up!!*
 
 == Troubleshooting ==
 
