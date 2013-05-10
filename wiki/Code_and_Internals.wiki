@@ -58,13 +58,13 @@ This is much more secure because:
 
 The "Third level" code are the common functions that the two provider functions above both use to perform the authentication. They are:
 
- * {{{computeTimeCode}}}
- * {{{get_timestamp}}}
- * {{{addCookie}}}
- * {{{getUserSecret}}}
- * {{{get_shared_secret}}}
- * {{{getSharedKey}}}
- * {{{hash_cookie}}}
+ * {{{computeTimeCode}}} - Given the secret key, and the current time, returns the correct security code for the given time.
+ * {{{get_timestamp}}} - Returns current time. Number represents number of 30-second intervals since epoch, per authentication protocol standard
+ * {{{addCookie}}} - Add cookie to authentication request - allowing subsequent access withouth re-authentication (within alloted re-authorization time)
+ * {{{getUserSecret}}} - From the username - fetch the secret key. This works now by reading static files. Returns Base32 encoded key
+ * {{{get_shared_secret}}} - Converts key from getUserSecret from Base32 into usable binary key.
+ * {{{getSharedKey}}} - Reads specified filename - extracts plaintext key.
+ * {{{hash_cookie}}} - Performs cryptographic hash of authentication cookie - so we can set and, and/or determine if it is valid
 
 == Other References and Acknowledgements ==
 
