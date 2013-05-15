@@ -45,6 +45,12 @@ If you are worried about someone (insecure HTTP session, or even  a trojan runni
 
 == Example Configuration ==
 
+=== Basic Authentication ===
+
+The Basic-Authenticaiton-specific below are that:
+ * {{{AuthBasicProvider}}} is set to {{{google_authenticator}}}
+ * {{{AuthType}}} is {{{Basic}}}
+ 
 <code>
 Loadmodule authn_google_module modules/mod_authn_google.so
 <Directory /MyPath>
@@ -60,6 +66,33 @@ Loadmodule authn_google_module modules/mod_authn_google.so
   GoogleAuthUserPath ga_auth
   GoogleAuthCookieLife 3600
   GoogleAuthEntryWindow 2
+</Directory>
+</code>
+=== Digest Authentication ===
+
+The Digest-Authenticaiton-specific below are that:
+ * {{{AuthDigestProvider}}} is set to {{{google_authenticator}}}
+ * {{{AuthType}}} is {{{Digest}}}
+ * {{{AuthDigestDomain}}} is set to something. (See Apache Docs)
+
+<code>
+Loadmodule authn_google_module modules/mod_authn_google.so
+<Directory /MyPath>
+  Options FollowSymLinks Indexes ExecCGI
+  AllowOverride All
+  Order deny,allow
+  Allow from all
+
+  AuthType Digest
+  AuthDigestDomain /private/ http://mirror.example.com/private2/
+  AuthDigestProvider "google_authenticator"
+
+  AuthName "My Test"
+
+  Require valid-user
+  GoogleAuthUserPath ga_auth
+  GoogleAuthCookieLife 3600
+  GoogleAuthEntryWindow 1
 </Directory>
 </code>
 
