@@ -116,8 +116,11 @@ abcdefabcdef2345
 "PASSWORD=mySecret
 }}}
 
+When a static password is used in conjunction with the secret key, the user should enter the static password immediately followed by the 6-digit one-time code when prompted for a password. For example, in the example above, when the user was prompted to login, they would check their Google Authenticator application and receive a one-time code such as {{{123456}}}. In such a case, they would enter a password as:
 
-*NOTE: The static password option is only present in release "r11" and up!!*
+{{{mySecret123456}}}
+
+*NOTE: The static password option is only present in release "r21" and up!!*
 
 == Troubleshooting ==
 
